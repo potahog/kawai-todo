@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  TouchableOpacityComponent,
+  Platform,
   
 } from "react-native";
 
@@ -16,9 +18,10 @@ export default class ToDo extends Component {
     isCompleted: false,
   };
   render() {
-      const { isCompleted } = this.state;
+      const { isCompleted, isEditing } = this.state;
     return (
       <View style={styles.container}>
+        <View style={ styles.column }>
         <TouchableOpacity onPress={this._completeToDo}>
           <View style={[
               styles.circle, 
@@ -26,7 +29,37 @@ export default class ToDo extends Component {
               ]} 
             />
         </TouchableOpacity>
-        <Text style={styles.text}>Hello I'm a To Do</Text>
+        <Text style={[
+          styles.text,
+          isCompleted ? styles.completedText : styles.unCompletedText 
+          ]}>
+            Hello I'm a To Do
+          </Text>
+        </View>
+        <View style={styles.column}>
+          {isEditing ? (
+            <View style={styles.actions}>
+              <TouchableOpacity onPressOut={this._finishEditing}>
+                <View style={styles.actionContainer}>
+                  <Text style={styles.actionText}>✅</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ):(
+            <View style={styles.actions}>
+              <TouchableOpacity onPressOut={this._startEditing}>
+                <View style={styles.actionContainer}>
+                  <Text style={styles.actionText}>✏️</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <View style={styles.actionContainer}>
+                  <Text style={styles.actionText}>❌</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
     );
   }
@@ -40,8 +73,24 @@ export default class ToDo extends Component {
   }
 
   _toggleComplete = () =>{
+    this.setState(prevState=>{
+      return {
+        isCOmpleted: !prevState.isCompleted
+      };
+    });
+  };
 
-  }
+  _startEditing = () => {
+    this.setState({
+      isEditing: true
+    });
+  };
+
+  _finishEditing = () => {
+    this.setState({
+      isEditing: false
+    });
+  };
 }
 
 const styles = StyleSheet.create({
@@ -51,12 +100,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between"
   },
   circle: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    borderColor: "red",
     borderWidth: 3,
     marginRight: 20,
   },
@@ -70,5 +119,25 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 20,
     marginVertical: 20,
+  },
+  completedText: {
+    color: "#bbb",
+    textDecorationLine: "line-through"
+  },
+  uncompletedText: {
+    color: "#353839"
+  },
+  column: {
+    flexDirection : "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  actions: {
+    flexDirection: "row",
+  },
+  actionContainer: {
+    marginVertical: 10,
+    marginHorizontal: 10,
+
   }
 });
