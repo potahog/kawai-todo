@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { AppLoading } from "expo";
 import Todo from "./ToDo";
+import uuidv1 from "uuid/v1";
 
 const { height, width } = Dimensions.get("window");
 
@@ -40,6 +41,7 @@ export default class App extends React.Component {
             placeholderTextColor={"#999"}
             returnKeyType={"done"}
             autoCorrect={false}
+            onSubmitEditing={this._addToDo}
           />
           <ScrollView contentContainerStyle={styles.toDos}></ScrollView>
         </View>
@@ -52,7 +54,35 @@ export default class App extends React.Component {
     });
   };
   _loadToDos = () => {
-    // this.setState({ loadedToDos: true });
+    this.setState({
+      loadedToDos: true
+    });
+  };
+
+  _addToDo = () => {
+    const { newToDo } = this.state;
+    if (newToDo !== "") {
+      this.setState(prevState => {
+        const ID = uuidv1();
+        const newTodoObject = {
+          [ID]: {
+            id: ID,
+            isCompleted: false,
+            text: newToDo,
+            createdAt: Date.now()
+          }
+        };
+        const newState = {
+          ...prevState,
+          newToDo: "",
+          toDos: {
+            ...prevState.toDos,
+            ...newTodoObject
+          }
+        }
+        return {...newState};
+      });
+    }
   };
 }
 
