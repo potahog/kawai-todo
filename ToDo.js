@@ -21,19 +21,21 @@ export default class ToDo extends Component {
     text: PropTypes.string.isRequired,
     isCompleted: PropTypes.bool.isRequired,
     delete: PropTypes.func.isRequired,
-    if: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    uncompletedTodo: PropTypes.func.isRequired,
+    completeToDo: PropTypes.func.isRequired,
   };
   state = {
     isEditing: false,
     toDoValue: ""
   };
   render() {
-    const { isCompleted, isEditing, toDoValue } = this.state;
-    const { text, id, deleteToDo } = this.props;
+    const { isEditing, toDoValue } = this.state;
+    const { text, id, deleteToDo, isCompleted } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.column}>
-          <TouchableOpacity onPress={this._completeToDo}>
+          <TouchableOpacity onPress={this._toggleComplete}>
             <View
               style={[
                 styles.circle,
@@ -102,11 +104,12 @@ export default class ToDo extends Component {
   };
 
   _toggleComplete = () => {
-    this.setState(prevState => {
-      return {
-        isCOmpleted: !prevState.isCompleted
-      };
-    });
+    const {isCompleted, uncompleteToDo, completeToDo, id} = this.props;
+    if(isCompleted){
+      uncompleteToDo(id);
+    }else{
+      completeToDo(id);
+    }
   };
 
   _startEditing = () => {
