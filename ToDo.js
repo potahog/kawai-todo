@@ -8,18 +8,28 @@ import {
   Platform,
   TextInput
 } from "react-native";
+import PropTypes from "prop-types";
 
 const { width, height } = Dimensions.get("window");
 
 export default class ToDo extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isEditing: false, toDoValue: props.text };
+  }
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    isCompleted: PropTypes.bool.isRequired,
+    delete: PropTypes.func.isRequired,
+    if: PropTypes.string.isRequired,
+  };
   state = {
     isEditing: false,
-    isCompleted: false,
     toDoValue: ""
   };
   render() {
     const { isCompleted, isEditing, toDoValue } = this.state;
-    const { text } = this.props;
+    const { text, id, deleteToDo } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.column}>
@@ -35,7 +45,7 @@ export default class ToDo extends Component {
             <TextInput
               style={[
                 styles.text,
-                styles.input, 
+                styles.input,
                 isCompleted ? styles.completedText : styles.uncompletedText
               ]}
               value={toDoValue}
@@ -71,7 +81,7 @@ export default class ToDo extends Component {
                   <Text style={styles.actionText}>✏️</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPressOut={() => deleteToDo(id)}>
                 <View style={styles.actionContainer}>
                   <Text style={styles.actionText}>❌</Text>
                 </View>
@@ -100,10 +110,8 @@ export default class ToDo extends Component {
   };
 
   _startEditing = () => {
-    const { text } = this.props;
     this.setState({
-      isEditing: true,
-      toDoValue: text
+      isEditing: true
     });
   };
 
@@ -113,11 +121,11 @@ export default class ToDo extends Component {
     });
   };
 
-  _controllInput = text =>{
+  _controllInput = text => {
     this.setState({
-      toDoValue : text
+      toDoValue: text
     });
-  }
+  };
 }
 
 const styles = StyleSheet.create({
