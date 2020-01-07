@@ -5,9 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  TouchableOpacityComponent,
   Platform,
-  
+  TextInput
 } from "react-native";
 
 const { width, height } = Dimensions.get("window");
@@ -16,25 +15,45 @@ export default class ToDo extends Component {
   state = {
     isEditing: false,
     isCompleted: false,
+    toDoValue: ""
   };
   render() {
-      const { isCompleted, isEditing } = this.state;
+    const { isCompleted, isEditing, toDoValue } = this.state;
+    const { text } = this.props;
     return (
       <View style={styles.container}>
-        <View style={ styles.column }>
-        <TouchableOpacity onPress={this._completeToDo}>
-          <View style={[
-              styles.circle, 
-              isCompleted ? styles.completedCircle : styles.unCompletedCircle
-              ]} 
+        <View style={styles.column}>
+          <TouchableOpacity onPress={this._completeToDo}>
+            <View
+              style={[
+                styles.circle,
+                isCompleted ? styles.completedCircle : styles.unCompletedCircle
+              ]}
             />
-        </TouchableOpacity>
-        <Text style={[
-          styles.text,
-          isCompleted ? styles.completedText : styles.unCompletedText 
-          ]}>
-            Hello I'm a To Do
-          </Text>
+          </TouchableOpacity>
+          {isEditing ? (
+            <TextInput
+              style={[
+                styles.input, 
+                styles.text,
+                isCompleted ? styles.completedText : styles.uncompletedText
+              ]}
+              value={toDoValue}
+              multiline={true}
+              onChangeText={this._controllInput}
+              returnKeyType={"done"}
+              onBlur={this._finishEditing}
+            />
+          ) : (
+            <Text
+              style={[
+                styles.text,
+                isCompleted ? styles.completedText : styles.unCompletedText
+              ]}
+            >
+              {text}
+            </Text>
+          )}
         </View>
         <View style={styles.column}>
           {isEditing ? (
@@ -45,7 +64,7 @@ export default class ToDo extends Component {
                 </View>
               </TouchableOpacity>
             </View>
-          ):(
+          ) : (
             <View style={styles.actions}>
               <TouchableOpacity onPressOut={this._startEditing}>
                 <View style={styles.actionContainer}>
@@ -64,16 +83,16 @@ export default class ToDo extends Component {
     );
   }
 
-  _completeToDo = () =>{
-        this.setState(prevState =>{
-            return {
-                isCompleted: !prevState.isCompleted
-            };
-        });
-  }
+  _completeToDo = () => {
+    this.setState(prevState => {
+      return {
+        isCompleted: !prevState.isCompleted
+      };
+    });
+  };
 
-  _toggleComplete = () =>{
-    this.setState(prevState=>{
+  _toggleComplete = () => {
+    this.setState(prevState => {
       return {
         isCOmpleted: !prevState.isCompleted
       };
@@ -81,8 +100,10 @@ export default class ToDo extends Component {
   };
 
   _startEditing = () => {
+    const { text } = this.props;
     this.setState({
-      isEditing: true
+      isEditing: true,
+      toDoValue: text
     });
   };
 
@@ -91,6 +112,12 @@ export default class ToDo extends Component {
       isEditing: false
     });
   };
+
+  _controllInput = text =>{
+    this.setState({
+      toDoValue : text
+    });
+  }
 }
 
 const styles = StyleSheet.create({
@@ -107,7 +134,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
     borderWidth: 3,
-    marginRight: 20,
+    marginRight: 20
   },
   completedCircle: {
     borderColor: "#bbb"
@@ -118,7 +145,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "600",
     fontSize: 20,
-    marginVertical: 20,
+    marginVertical: 20
   },
   completedText: {
     color: "#bbb",
@@ -128,16 +155,19 @@ const styles = StyleSheet.create({
     color: "#353839"
   },
   column: {
-    flexDirection : "row",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
   actions: {
-    flexDirection: "row",
+    flexDirection: "row"
   },
   actionContainer: {
     marginVertical: 10,
-    marginHorizontal: 10,
-
+    marginHorizontal: 10
+  },
+  input: {
+    marginVertical: 20,
+    width: width / 2
   }
 });
