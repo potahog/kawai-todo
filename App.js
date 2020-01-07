@@ -1,66 +1,75 @@
-import React from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  StatusBar, 
-  TextInput, 
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  TextInput,
   Dimensions,
-  Platform, 
+  Platform,
   ScrollView
-} from 'react-native';
+} from "react-native";
+import { AppLoading } from "expo";
 import Todo from "./ToDo";
 
-const {height, width} = Dimensions.get("window");
+const { height, width } = Dimensions.get("window");
 
 export default class App extends React.Component {
-  state ={
-    newToDo: ""
+  state = {
+    newToDo: "",
+    loadedToDos: false
   };
-  render(){
-    const { newToDo } = this.state;
+  componentDidMount = () => {
+    this._loadToDos();
+  };
+  render() {
+    const { newToDo, loadedToDos } = this.state;
+    if (!loadedToDos) {
+      return <AppLoading />;
+    }
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Text style={styles.title}>Kawai To Do</Text>
         <View style={styles.card}>
-          <TextInput 
-          style={styles.input} 
-          placeholder={"New To Do"} 
-          value={newToDo} 
-          onChange={this._contorllNewTodo}
-          placeholderTextColor={"#999"}
-          returnKeyType={"done"}
-          autoCorrect={false}
+          <TextInput
+            style={styles.input}
+            placeholder={"New To Do"}
+            value={newToDo}
+            onChange={this._contorllNewTodo}
+            placeholderTextColor={"#999"}
+            returnKeyType={"done"}
+            autoCorrect={false}
           />
-          <ScrollView contentContainerStyle={styles.toDos}>
-              <Todo text={"Hello I'm a To Do"} />
-          </ScrollView>
+          <ScrollView contentContainerStyle={styles.toDos}></ScrollView>
         </View>
       </View>
     );
   }
-  _contorllNewTodo = text =>{
+  _contorllNewTodo = text => {
     this.setState({
-      newTodo: text
-    })
-  }
+      newToDo: text
+    });
+  };
+  _loadToDos = () => {
+    // this.setState({ loadedToDos: true });
+  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F23567',
-    alignItems: 'center',
+    backgroundColor: "#F23567",
+    alignItems: "center"
   },
   title: {
-    color:"white",
+    color: "white",
     fontSize: 30,
     marginTop: 50,
     fontWeight: "200",
-    marginBottom: 30,
+    marginBottom: 30
   },
-  card:{
+  card: {
     backgroundColor: "white",
     flex: 1,
     width: width - 25,
@@ -71,23 +80,23 @@ const styles = StyleSheet.create({
         shadowColor: "rgb(50, 50, 50)",
         shadowOpacity: 0.3,
         shadowRadius: 5,
-        shadowOffset:{
+        shadowOffset: {
           heigth: -1,
           width: 0
         }
       },
-      android:{
-        elevation: 3,
+      android: {
+        elevation: 3
       }
     })
   },
-  input:{
+  input: {
     padding: 20,
     borderBottomColor: "#bbb",
     borderBottomWidth: 1,
-    fontSize: 25,
+    fontSize: 25
   },
-  toDos:{
-    alignItems: "center",
+  toDos: {
+    alignItems: "center"
   }
 });
