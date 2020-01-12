@@ -44,6 +44,7 @@ export default class App extends React.Component {
             returnKeyType={"done"}
             autoCorrect={false}
             onSubmitEditing={this._addToDo}
+            underlineColorAndroid={"transparent"}
           />
           <ScrollView contentContainerStyle={styles.toDos}>
             {Object.values(toDos).reverse().map(toDo => (
@@ -73,7 +74,7 @@ export default class App extends React.Component {
       const parseToDos = JSON.parse(toDos);
       this.setState({
         loadedToDos: true,
-        toDos: parseToDos,
+        toDos: parseToDos || {},
       });
     }catch (err){
       console.log(err);
@@ -173,6 +174,21 @@ export default class App extends React.Component {
 
   _saveToDos = (newToDos) =>{
     const saveToDos = AsyncStorage.setItem("toDos", JSON.stringify(newToDos));
+  }
+
+  _dragStart = (event) =>{
+    this.gragged = event.currentTarget;
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', this.dragged);
+  }
+
+  _dragEnd = (id) => {
+    this.dragged.style.display = 'block';
+    this.dragged.parentNode.removeChild(placeholder);
+
+    // update state
+    const { toDos } = this.state;
+    toDos.slice(id, 0, toDos.slice(id + 1, 1)[0]);
   }
 }
 
